@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: movie_ticket_booking
+  datasource:
+    url: jdbc:mysql://localhost:3306/movie_ticket_booking
+    username: root
+    password: 1163ruabin
+  jpa:
+    show-sql: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  signerKey: EPW3S9sIrpjBSxoWM3JzKIjS8ETuHYN1770xNYEPoUbBWhSanStMNSgiYhKHGokm
+  valid-duration: 3600 # in seconds
+  refreshable-duration: 36000 # in seconds
