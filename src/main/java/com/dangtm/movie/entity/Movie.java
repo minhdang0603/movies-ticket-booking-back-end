@@ -1,7 +1,6 @@
 package com.dangtm.movie.entity;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -57,10 +56,4 @@ public class Movie {
 
     @Column(name = "language")
     String language;
-
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "movie",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    Set<Show> shows;
 }

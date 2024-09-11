@@ -1,17 +1,20 @@
 package com.dangtm.movie.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.dangtm.movie.dto.request.UserCreationRequest;
 import com.dangtm.movie.dto.request.UserUpdateRequest;
 import com.dangtm.movie.dto.response.ApiResponse;
 import com.dangtm.movie.dto.response.UserResponse;
 import com.dangtm.movie.service.UserService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +39,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<UserResponse> updateUserById(@PathVariable("id") String id, @RequestBody @Valid UserUpdateRequest request) {
+    public ApiResponse<UserResponse> updateUserById(
+            @PathVariable("id") String id, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .data(userService.updateUserById(request, id))
                 .build();
@@ -45,16 +49,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable("id") String id) {
         userService.deleteUser(id);
-        return ApiResponse.<Void>builder()
-                .message("Delete user successfully")
-                .build();
+        return ApiResponse.<Void>builder().message("Delete user successfully").build();
     }
 
     @GetMapping("/my-info")
     public ApiResponse<UserResponse> getMyInfo() {
-        return ApiResponse.<UserResponse>builder()
-                .data(userService.getMyInfo())
-                .build();
+        return ApiResponse.<UserResponse>builder().data(userService.getMyInfo()).build();
     }
 
     @GetMapping()

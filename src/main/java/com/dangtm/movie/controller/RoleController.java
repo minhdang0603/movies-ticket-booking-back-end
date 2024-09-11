@@ -1,15 +1,17 @@
 package com.dangtm.movie.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.dangtm.movie.dto.request.RoleRequest;
 import com.dangtm.movie.dto.response.ApiResponse;
 import com.dangtm.movie.dto.response.RoleResponse;
 import com.dangtm.movie.service.RoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,5 +40,4 @@ public class RoleController {
         roleService.delete(roleName);
         return ApiResponse.<Void>builder().build();
     }
-
 }

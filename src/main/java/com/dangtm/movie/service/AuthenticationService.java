@@ -7,15 +7,6 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.dangtm.movie.dto.request.AuthenticationRequest;
-import com.dangtm.movie.dto.request.IntrospectRequest;
-import com.dangtm.movie.dto.request.LogoutRequest;
-import com.dangtm.movie.dto.request.RefreshRequest;
-import com.dangtm.movie.dto.response.AuthenticationResponse;
-import com.dangtm.movie.dto.response.IntrospectResponse;
-import com.dangtm.movie.entity.InvalidatedToken;
-import com.dangtm.movie.exception.AppException;
-import com.dangtm.movie.exception.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +15,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.dangtm.movie.dto.request.AuthenticationRequest;
+import com.dangtm.movie.dto.request.IntrospectRequest;
+import com.dangtm.movie.dto.request.LogoutRequest;
+import com.dangtm.movie.dto.request.RefreshRequest;
+import com.dangtm.movie.dto.response.AuthenticationResponse;
+import com.dangtm.movie.dto.response.IntrospectResponse;
+import com.dangtm.movie.entity.InvalidatedToken;
 import com.dangtm.movie.entity.User;
+import com.dangtm.movie.exception.AppException;
+import com.dangtm.movie.exception.ErrorCode;
 import com.dangtm.movie.repository.InvalidatedTokenRepository;
 import com.dangtm.movie.repository.UserRepository;
 import com.nimbusds.jose.*;
@@ -49,7 +49,7 @@ public class AuthenticationService {
 
     @NonFinal
     @Value("${jwt.signerKey}")
-        protected String SIGNER_KEY;
+    protected String SIGNER_KEY;
 
     @NonFinal
     @Value("${jwt.valid-duration}")
@@ -60,7 +60,8 @@ public class AuthenticationService {
     protected int REFRESHABLE_DURATION;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -73,10 +74,7 @@ public class AuthenticationService {
 
         var token = generateToken(user);
 
-        return AuthenticationResponse.builder()
-                .token(token)
-                .authenticated(true)
-                .build();
+        return AuthenticationResponse.builder().token(token).authenticated(true).build();
     }
 
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
@@ -97,10 +95,8 @@ public class AuthenticationService {
 
             String jit = signedToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
-            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                    .id(jit)
-                    .expiryTime(expiryTime)
-                    .build();
+            InvalidatedToken invalidatedToken =
+                    InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
 
             tokenRepository.save(invalidatedToken);
         } catch (AppException | JOSEException | ParseException e) {
@@ -114,22 +110,16 @@ public class AuthenticationService {
         String jit = signedToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
 
-        tokenRepository.save(InvalidatedToken.builder()
-                .id(jit)
-                .expiryTime(expiryTime)
-                .build());
+        tokenRepository.save(
+                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build());
 
         String email = signedToken.getJWTClaimsSet().getSubject();
 
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         String token = generateToken(user);
 
-        return AuthenticationResponse.builder()
-                .token(token)
-                .authenticated(true)
-                .build();
+        return AuthenticationResponse.builder().token(token).authenticated(true).build();
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
@@ -139,11 +129,11 @@ public class AuthenticationService {
 
         Date expiration = (isRefresh)
                 ? new Date(signedJWT
-                .getJWTClaimsSet()
-                .getIssueTime()
-                .toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
-                .toEpochMilli())
+                        .getJWTClaimsSet()
+                        .getIssueTime()
+                        .toInstant()
+                        .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                        .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);

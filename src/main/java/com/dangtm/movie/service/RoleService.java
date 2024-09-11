@@ -1,19 +1,19 @@
 package com.dangtm.movie.service;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.dangtm.movie.dto.request.RoleRequest;
 import com.dangtm.movie.dto.response.RoleResponse;
 import com.dangtm.movie.entity.Role;
 import com.dangtm.movie.mapper.RoleMapper;
 import com.dangtm.movie.repository.RoleRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +39,4 @@ public class RoleService {
     public void delete(String roleName) {
         roleRepository.deleteById(roleName);
     }
-
 }

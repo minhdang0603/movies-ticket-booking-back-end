@@ -1,7 +1,5 @@
 package com.dangtm.movie.entity;
 
-import java.util.Set;
-
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -23,10 +21,4 @@ public class City {
 
     @Column(name = "name")
     String name;
-
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "city",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    Set<Cinema> cinemas;
 }

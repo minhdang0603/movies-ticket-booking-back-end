@@ -1,5 +1,9 @@
 package com.dangtm.movie.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.dangtm.movie.constrant.PredefinedMovieStatus;
 import com.dangtm.movie.dto.response.MoviesResponse;
 import com.dangtm.movie.entity.Movie;
@@ -7,13 +11,10 @@ import com.dangtm.movie.exception.AppException;
 import com.dangtm.movie.exception.ErrorCode;
 import com.dangtm.movie.mapper.MovieMapper;
 import com.dangtm.movie.repository.MovieRepository;
-import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +25,7 @@ public class MovieService {
     MovieMapper movieMapper;
 
     public Movie getMovieById(String id) {
-        return movieRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.MOVIE_NOT_EXISTED));
+        return movieRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.MOVIE_NOT_EXISTED));
     }
 
     public List<MoviesResponse> getNowShowingMovie() {

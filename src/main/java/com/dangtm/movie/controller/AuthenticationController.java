@@ -1,5 +1,9 @@
 package com.dangtm.movie.controller;
 
+import java.text.ParseException;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.dangtm.movie.dto.request.AuthenticationRequest;
 import com.dangtm.movie.dto.request.IntrospectRequest;
 import com.dangtm.movie.dto.request.LogoutRequest;
@@ -9,12 +13,10 @@ import com.dangtm.movie.dto.response.AuthenticationResponse;
 import com.dangtm.movie.dto.response.IntrospectResponse;
 import com.dangtm.movie.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,9 +28,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         var authenticate = authenticationService.authenticate(request);
-        return ApiResponse.<AuthenticationResponse>builder()
-                .data(authenticate)
-                .build();
+        return ApiResponse.<AuthenticationResponse>builder().data(authenticate).build();
     }
 
     @PostMapping("/introspect")
@@ -42,14 +42,12 @@ public class AuthenticationController {
     @PostMapping("/logout")
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) {
         authenticationService.logout(request);
-        return ApiResponse.<Void>builder()
-                .message("Logout successful")
-                .build();
+        return ApiResponse.<Void>builder().message("Logout successful").build();
     }
 
     @PostMapping("/refresh")
     ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshRequest request)
-                throws ParseException, JOSEException {
+            throws ParseException, JOSEException {
         return ApiResponse.<AuthenticationResponse>builder()
                 .data(authenticationService.refreshToken(request))
                 .build();

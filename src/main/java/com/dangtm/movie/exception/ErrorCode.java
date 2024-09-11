@@ -18,7 +18,9 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_EMAIL_PASSWORD(1008, "Invalid email or password", HttpStatus.BAD_REQUEST),
-    MOVIE_NOT_EXISTED(1009, "Movie does not exist", HttpStatus.NOT_FOUND),;
+    MOVIE_NOT_EXISTED(1009, "Movie does not exist", HttpStatus.NOT_FOUND),
+    CINEMA_NOT_EXISTED(1010, "Cinema does not exist", HttpStatus.NOT_FOUND),
+    ;
 
     private final int code;
     private final String message;

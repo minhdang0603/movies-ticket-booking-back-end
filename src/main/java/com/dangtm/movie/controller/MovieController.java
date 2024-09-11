@@ -1,18 +1,20 @@
 package com.dangtm.movie.controller;
 
-import com.dangtm.movie.dto.response.ApiResponse;
-import com.dangtm.movie.dto.response.MoviesResponse;
-import com.dangtm.movie.entity.Movie;
-import com.dangtm.movie.service.MovieService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.dangtm.movie.dto.response.ApiResponse;
+import com.dangtm.movie.dto.response.MoviesResponse;
+import com.dangtm.movie.entity.Movie;
+import com.dangtm.movie.service.MovieService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,10 +39,6 @@ public class MovieController {
 
     @GetMapping("/{id}")
     public ApiResponse<Movie> getMovieById(@PathVariable("id") String id) {
-        return ApiResponse.<Movie>builder()
-                .data(movieService.getMovieById(id))
-                .build();
+        return ApiResponse.<Movie>builder().data(movieService.getMovieById(id)).build();
     }
-
-
 }

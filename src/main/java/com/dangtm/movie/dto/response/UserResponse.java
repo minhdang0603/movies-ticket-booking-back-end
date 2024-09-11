@@ -1,6 +1,5 @@
 package com.dangtm.movie.dto.response;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import lombok.*;

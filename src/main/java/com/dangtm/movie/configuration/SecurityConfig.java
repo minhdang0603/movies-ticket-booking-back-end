@@ -27,7 +27,7 @@ public class SecurityConfig {
         "/users", "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
 
-    private final String[] PUBLIC_GET_END_POINTS = {"/movies/**", "/movies/{id}"};
+    private final String[] PUBLIC_GET_END_POINTS = {"/movies/**", "/cities", "/cinemas/**"};
 
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -46,10 +46,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests(request -> request
-                .requestMatchers(HttpMethod.POST, PUBLIC_POST_END_POINTS).permitAll()
-                .requestMatchers(HttpMethod.GET, PUBLIC_GET_END_POINTS).permitAll()
-                .anyRequest().authenticated());
+        httpSecurity.authorizeRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_POST_END_POINTS)
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, PUBLIC_GET_END_POINTS)
+                .permitAll()
+                .anyRequest()
+                .authenticated());
 
         // config bear token
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer ->
