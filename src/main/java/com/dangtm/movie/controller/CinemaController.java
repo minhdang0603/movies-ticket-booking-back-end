@@ -1,11 +1,16 @@
 package com.dangtm.movie.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
-import com.dangtm.movie.dto.response.CinemaResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import com.dangtm.movie.dto.response.ApiResponse;
+import com.dangtm.movie.dto.response.CinemaResponse;
 import com.dangtm.movie.service.CinemaService;
 
 import lombok.AccessLevel;
@@ -18,17 +23,24 @@ import lombok.experimental.FieldDefaults;
 @RequestMapping("/cinemas")
 public class CinemaController {
 
+    private static final Logger log = LoggerFactory.getLogger(CinemaController.class);
     CinemaService cinemaService;
 
     @GetMapping()
-    public ApiResponse<List<CinemaResponse>> getCinemasByCity(@RequestParam(value = "cityId", required = true) String cityId) {
+    public ApiResponse<List<CinemaResponse>> getCinemasByCity(
+            @RequestParam(value = "cityId", required = true) String cityId,
+            @RequestParam(value = "movieId") Optional<String> movieId,
+            @RequestParam(value = "date") Optional<String> date
+    ) {
         return ApiResponse.<List<CinemaResponse>>builder()
-                .data(cinemaService.getCinemaByCity(cityId))
+                .data(cinemaService.getCinemaByCityAndMovieId(cityId, movieId, date))
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CinemaResponse> getCinemaById(@PathVariable("id") String id) {
+    public ApiResponse<CinemaResponse> getCinemaByIdAndMovieId(
+            @PathVariable("id") String id
+    ) {
         return ApiResponse.<CinemaResponse>builder()
                 .data(cinemaService.getCinemaById(id))
                 .build();

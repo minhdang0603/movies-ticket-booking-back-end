@@ -1,6 +1,7 @@
 package com.dangtm.movie.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,13 @@ public class CityService {
 
     CityRepository cityRepository;
 
-    public List<City> findAll() {
-        return cityRepository.findAll();
+    public List<City> findCities(Optional<String> movieId) {
+        String movieIdStr = movieId.orElse(null);
+
+        if(movieIdStr == null) {
+            return cityRepository.findAll();
+        }
+
+        return cityRepository.findCitiesByMovieId(movieIdStr);
     }
 }

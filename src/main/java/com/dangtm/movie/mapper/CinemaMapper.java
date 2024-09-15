@@ -1,15 +1,15 @@
 package com.dangtm.movie.mapper;
 
-import com.dangtm.movie.dto.response.CinemaResponse;
-import com.dangtm.movie.entity.Cinema;
-import com.dangtm.movie.entity.CinemaImage;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.mapstruct.Mapper;
+
+import com.dangtm.movie.dto.response.CinemaResponse;
+import com.dangtm.movie.entity.Cinema;
+import com.dangtm.movie.entity.CinemaImage;
 
 @Mapper(componentModel = "spring")
 public interface CinemaMapper {
@@ -20,8 +20,6 @@ public interface CinemaMapper {
             return new ArrayList<>();
         }
 
-        return images.stream()
-                .map(CinemaImage::getImageUrl)
-                .collect(Collectors.toList());
+        return images.stream().map(CinemaImage::getImageUrl).collect(Collectors.toList());
     }
 }

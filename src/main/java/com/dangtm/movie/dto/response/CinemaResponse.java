@@ -1,11 +1,9 @@
 package com.dangtm.movie.dto.response;
 
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
-import com.dangtm.movie.entity.CinemaImage;
 import com.dangtm.movie.entity.City;
 
 import lombok.*;
