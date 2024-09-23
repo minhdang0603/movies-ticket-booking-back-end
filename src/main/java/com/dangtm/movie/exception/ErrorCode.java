@@ -1,5 +1,6 @@
 package com.dangtm.movie.exception;
 
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -20,6 +21,9 @@ public enum ErrorCode {
     INVALID_EMAIL_PASSWORD(1008, "Invalid email or password", HttpStatus.BAD_REQUEST),
     MOVIE_NOT_EXISTED(1009, "Movie does not exist", HttpStatus.NOT_FOUND),
     CINEMA_NOT_EXISTED(1010, "Cinema does not exist", HttpStatus.NOT_FOUND),
+    SHOW_NOT_EXISTED(1011, "Show does not exist", HttpStatus.NOT_FOUND),
+    BOOKING_NOT_EXISTED(1012, "Booking does not exist", HttpStatus.NOT_FOUND),
+    CRAWL_FAILED(1013, "Crawl Failed", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     private final int code;

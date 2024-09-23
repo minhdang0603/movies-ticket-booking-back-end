@@ -35,7 +35,6 @@ public class CinemaService {
         if(movieIdStr != null && date.isPresent()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate localDate = LocalDate.parse(date.orElse(null), formatter);
-            log.info(localDate.toString());
             return cinemaRepository.findCinemasByMovieIdAndCityId(movieIdStr, cityId, localDate)
                     .stream().map(cinemaMapper::toResponse).toList();
         }

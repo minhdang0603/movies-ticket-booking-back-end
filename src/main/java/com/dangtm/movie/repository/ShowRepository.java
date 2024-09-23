@@ -1,7 +1,9 @@
 package com.dangtm.movie.repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,12 +19,14 @@ public interface ShowRepository extends JpaRepository<Show, String> {
             + "(:cinemaId IS NULL OR s.cinema.cinemaId = :cinemaId) "
             + "AND (:movieId IS NULL OR s.movie.id = :movieId) "
             + "AND (:cityId IS NULL OR s.cinema.city.id = :cityId) "
-            + "AND s.date = :date")
-    List<Show> findShowsByOptionalParams(
+            + "AND (:date IS NULL OR s.date = :date)")
+    Optional<List<Show>> findShowsByOptionalParams(
             @Param("cinemaId") String cinemaId,
             @Param("movieId") String movieId,
             @Param("cityId") String cityId,
             @Param("date") LocalDate date
     );
+
+    Optional<Show> findShowByDateAndStartTimeAndCinema_CinemaIdAndMovie_Id(LocalDate date, LocalTime startTime, String cinemaId, String movieId);
 
 }

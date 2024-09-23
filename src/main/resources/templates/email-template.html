@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5" style="background: lightgray">
+    <div class="alert alert-success text-center">
+        <h1>Đặt vé thành công!</h1>
+        <p>Thank you, <strong th:text="${name}">User Name</strong>, for booking your ticket(s).</p>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2>Your Booking Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Booking Time:</strong> <span th:text="${bookingTime}">Booking Time</span></p>
+            <p><strong>Number of Tickets:</strong> <span th:text="${numberOfTicket}">Number of Tickets</span></p>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2>Show Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Show Title:</strong> <span th:text="${showTitle}">Show Title</span></p>
+            <p><strong>Show Time:</strong> <span th:text="${showTime}">Show Time</span></p>
+            <p><strong>Show Location:</strong> <span th:text="${showLocation}">Show Location</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

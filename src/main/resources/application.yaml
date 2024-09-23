@@ -2,11 +2,26 @@ spring:
   application:
     name: movie_ticket_booking
   datasource:
-    url: jdbc:mysql://localhost:3306/movie_ticket_booking
-    username: root
-    password: 1163ruabin
-  jpa:
-    show-sql: true
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/movie_ticket_booking}
+    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_PASSWORD:1163ruabin}
+#  jpa:
+#    show-sql: true
+  mail:
+    protocol: smtp
+    host: smtp.yandex.com
+    port: 465
+    username: minhdan0603@yandex.com
+    password: pkjxmdxlavidcbie
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+    default-encoding: UTF-8
 
 server:
   port: 8080
@@ -17,3 +32,14 @@ jwt:
   signerKey: EPW3S9sIrpjBSxoWM3JzKIjS8ETuHYN1770xNYEPoUbBWhSanStMNSgiYhKHGokm
   valid-duration: 3600 # in seconds
   refreshable-duration: 36000 # in seconds
+
+mail:
+  fromMail:
+    addr: minhdan0603@yandex.com
+
+chrome:
+  driver:
+    path: ${CHROME_driver_PATH:D:\dev-spring-boot\spring-project\movie\chromedriver.exe}
+  user:
+    data:
+      path: ${CHROME_USER_DATA_PATH:C:\Users\ADMIN\AppData\Local\Google\Chrome\User Data\Default}

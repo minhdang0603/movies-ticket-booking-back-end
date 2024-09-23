@@ -27,6 +27,12 @@ public class Cinema {
     @Column(name = "address")
     String address;
 
+    @Column(name = "latitude")
+    String latitude;
+
+    @Column(name = "longitude")
+    String longitude;
+
     @Column(name = "fax")
     String fax;
 

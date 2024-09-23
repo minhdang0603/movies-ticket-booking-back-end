@@ -18,6 +18,8 @@ public class CinemaResponse {
     String cinemaId;
     String name;
     String address;
+    String latitude;
+    String longitude;
     String fax;
     String hotline;
     City city;

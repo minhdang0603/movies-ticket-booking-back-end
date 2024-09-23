@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.dangtm.movie.entity.Audio;
 
 @Repository
-public interface AudioRepository extends JpaRepository<Audio, Integer> {}
+public interface AudioRepository extends JpaRepository<Audio, Integer> {
+    Audio findAudioByType(String type);
+
+}

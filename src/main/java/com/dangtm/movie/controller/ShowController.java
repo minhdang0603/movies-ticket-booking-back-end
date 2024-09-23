@@ -6,10 +6,7 @@ import com.dangtm.movie.entity.Show;
 import com.dangtm.movie.service.ShowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +31,18 @@ public class ShowController {
             @RequestParam(value = "movieId") Optional<String> movieId,
             @RequestParam(value = "cinemaId") Optional<String> cinemaId,
             @RequestParam(value = "cityId") Optional<String> cityId,
-            @RequestParam(value = "date") String date
+            @RequestParam(value = "date") Optional<String> date
     ) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate localDate = LocalDate.parse(date, formatter);
 
         return ApiResponse.<List<ShowResponse>>builder()
-                .data(showService.getShows(cinemaId, movieId, cityId, localDate))
+                .data(showService.getShows(cinemaId, movieId, cityId, date))
+                .build();
+    }
+
+    @GetMapping("/{showId}")
+    public ApiResponse<ShowResponse> getShowById(@PathVariable("showId") String showId) {
+        return ApiResponse.<ShowResponse>builder()
+                .data(showService.getShowById(showId))
                 .build();
     }
 

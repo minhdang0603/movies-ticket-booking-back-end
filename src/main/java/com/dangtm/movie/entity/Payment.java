@@ -22,12 +22,12 @@ public class Payment {
     String id;
 
     @Column(name = "amount")
-    double amount;
+    long amount;
 
     @Column(name = "pay_date")
     LocalDateTime payDate;
 
-    @ManyToOne(
+    @OneToOne(
             fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "booking_id")
