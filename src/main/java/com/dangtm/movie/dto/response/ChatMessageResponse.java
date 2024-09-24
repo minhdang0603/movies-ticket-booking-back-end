@@ -1,23 +1,19 @@
 package com.dangtm.movie.dto.response;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Date;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentResponse {
+public class ChatMessageResponse {
     String id;
-
-    long amount;
-
-    LocalDateTime payDate;
-
-    BookingResponse booking;
+    UserResponse sender;
+    UserResponse recipient;
+    String content;
+    Date timestamp;
 }

@@ -8,5 +8,4 @@ import com.dangtm.movie.entity.Audio;
 @Repository
 public interface AudioRepository extends JpaRepository<Audio, Integer> {
     Audio findAudioByType(String type);
-
 }

@@ -13,5 +13,4 @@ public interface MovieRepository extends JpaRepository<Movie, String> {
     List<Movie> findByStatus(String status);
 
     Optional<Movie> findByTitle(String title);
-
 }

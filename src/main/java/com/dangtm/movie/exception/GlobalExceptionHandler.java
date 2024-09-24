@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import jakarta.validation.ConstraintViolation;
 
-import org.openqa.selenium.NoSuchWindowException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

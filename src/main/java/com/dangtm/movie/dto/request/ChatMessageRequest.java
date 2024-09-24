@@ -1,5 +1,7 @@
 package com.dangtm.movie.dto.request;
 
+import java.util.Date;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,12 +10,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingCreationRequest {
-    String bookingTime;
-
-    int numberOfTicket;
-
-    String userId;
-
-    String showId;
+public class ChatMessageRequest {
+    String senderId;
+    String recipientId;
+    String content;
+    Date timestamp;
 }

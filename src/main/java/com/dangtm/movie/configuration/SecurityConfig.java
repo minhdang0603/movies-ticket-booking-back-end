@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_END_POINTS)
                 .permitAll()
+                .requestMatchers("/ws/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated());
 
@@ -71,6 +73,7 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOrigin("http://localhost:3000");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         // apply for all endpoints

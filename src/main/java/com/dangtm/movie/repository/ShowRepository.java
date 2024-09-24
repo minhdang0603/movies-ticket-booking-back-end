@@ -24,9 +24,8 @@ public interface ShowRepository extends JpaRepository<Show, String> {
             @Param("cinemaId") String cinemaId,
             @Param("movieId") String movieId,
             @Param("cityId") String cityId,
-            @Param("date") LocalDate date
-    );
+            @Param("date") LocalDate date);
 
-    Optional<Show> findShowByDateAndStartTimeAndCinema_CinemaIdAndMovie_Id(LocalDate date, LocalTime startTime, String cinemaId, String movieId);
-
+    Optional<Show> findShowByDateAndStartTimeAndCinema_CinemaIdAndMovie_Id(
+            LocalDate date, LocalTime startTime, String cinemaId, String movieId);
 }

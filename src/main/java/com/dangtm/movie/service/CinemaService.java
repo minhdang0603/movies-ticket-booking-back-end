@@ -28,15 +28,17 @@ public class CinemaService {
     CinemaRepository cinemaRepository;
     CinemaMapper cinemaMapper;
 
-    public List<CinemaResponse> getCinemaByCityAndMovieId(String cityId, Optional<String> movieId, Optional<String> date) {
+    public List<CinemaResponse> getCinemaByCityAndMovieId(
+            String cityId, Optional<String> movieId, Optional<String> date) {
 
         String movieIdStr = movieId.orElse(null);
 
-        if(movieIdStr != null && date.isPresent()) {
+        if (movieIdStr != null && date.isPresent()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate localDate = LocalDate.parse(date.orElse(null), formatter);
-            return cinemaRepository.findCinemasByMovieIdAndCityId(movieIdStr, cityId, localDate)
-                    .stream().map(cinemaMapper::toResponse).toList();
+            return cinemaRepository.findCinemasByMovieIdAndCityId(movieIdStr, cityId, localDate).stream()
+                    .map(cinemaMapper::toResponse)
+                    .toList();
         }
 
         var cinemas = cinemaRepository.findCinemaByCity_Id(cityId);

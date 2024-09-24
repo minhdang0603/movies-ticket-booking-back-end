@@ -1,17 +1,18 @@
 package com.dangtm.movie.controller;
 
-import com.dangtm.movie.dto.request.PaymentCreationRequest;
-import com.dangtm.movie.dto.response.ApiResponse;
-import com.dangtm.movie.dto.response.PaymentResponse;
-import com.dangtm.movie.entity.Payment;
-import com.dangtm.movie.service.PaymentService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.dangtm.movie.dto.request.PaymentCreationRequest;
+import com.dangtm.movie.dto.response.ApiResponse;
+import com.dangtm.movie.dto.response.PaymentResponse;
+import com.dangtm.movie.service.PaymentService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,5 +28,4 @@ public class PaymentController {
                 .data(paymentService.createPayment(request))
                 .build();
     }
-
 }

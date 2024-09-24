@@ -1,35 +1,34 @@
 package com.dangtm.movie.service;
 
-import com.dangtm.movie.configuration.PredefinedAudioType;
-import com.dangtm.movie.constrant.PredefinedMovieStatus;
-import com.dangtm.movie.entity.*;
-import com.dangtm.movie.exception.AppException;
-import com.dangtm.movie.exception.ErrorCode;
-import com.dangtm.movie.repository.*;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
-import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.*;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import com.dangtm.movie.configuration.PredefinedAudioType;
+import com.dangtm.movie.constrant.PredefinedMovieStatus;
+import com.dangtm.movie.entity.*;
+import com.dangtm.movie.exception.AppException;
+import com.dangtm.movie.exception.ErrorCode;
+import com.dangtm.movie.repository.*;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -42,15 +41,20 @@ public class CrawlService {
     @NonFinal
     @Value("${chrome.user.data.path}")
     String CHROME_USER_DATA_PATH;
+
     @NonFinal
     @Value("${chrome.driver.path}")
     String CHROME_PATH;
+
     @NonFinal
     WebDriver driver;
+
     @NonFinal
     WebDriverWait wait;
+
     @NonFinal
     JavascriptExecutor js;
+
     @NonFinal
     boolean isSwitch = false;
 
@@ -98,25 +102,25 @@ public class CrawlService {
         closeBanner.click();
 
         // find theatre nav
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"nav\"]/ol/li[2]"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"nav\"]/ol/li[2]")))
+                .click();
 
         // navigate to theatre page
         driver.findElement(By.xpath("//*[@id=\"nav\"]/ol/li[2]/ul/li[1]")).click();
 
-        var cityUl = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[2]/ul")));
+        var cityUl = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[2]/ul")));
 
         var liList = cityUl.findElements(By.tagName("li"));
 
         for (int i = 1; i <= liList.size(); i++) {
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loading-mask")));
-            var cityEl = driver.findElement(
-                    By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[2]/ul/li[" + i + "]")
-            );
+            var cityEl = driver.findElement(By.xpath(
+                    "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[2]/ul/li[" + i
+                            + "]"));
             log.info("Access city: {}", cityEl.getText());
             js = (JavascriptExecutor) driver;
-            City city = City.builder()
-                    .name(cityEl.getText())
-                    .build();
+            City city = City.builder().name(cityEl.getText()).build();
 
             if (cityRepository.findByName(city.getName()).isEmpty()) {
                 cities.add(city);
@@ -128,8 +132,7 @@ public class CrawlService {
 
             cityEl.click();
             var cinemaUl = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[3]/ul"
-            )));
+                    "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[3]/ul")));
             var cinemaList = cinemaUl.findElements(By.className(cityId));
 
             for (int m = 0; m < cinemaList.size(); m++) {
@@ -169,7 +172,8 @@ public class CrawlService {
                     if (content.isEmpty()) {
                         log.warn("Date {} has no show", showDate);
                     } else {
-                        List<WebElement> showListEl = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("film-list")));
+                        List<WebElement> showListEl = wait.until(
+                                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("film-list")));
 
                         for (int k = 1; k <= showListEl.size(); k++) {
                             var firmListEl = showListEl.get(k - 1);
@@ -184,13 +188,14 @@ public class CrawlService {
 
                                 var filmScreen = filmScreenList.get(j - 1);
 
-                                String audioType = getAudioType(filmScreen.getText().trim());
+                                String audioType =
+                                        getAudioType(filmScreen.getText().trim());
 
                                 Audio audio = audioRepository.findAudioByType(audioType);
 
-                                var showTimeUl = driver.findElement(By.xpath(
-                                        "//*[@id=\"collateral-tabs\"]/dd[1]/div/div[2]/div[" + k + "]/div[3]/div[" + j + "]/ul"
-                                ));
+                                var showTimeUl =
+                                        driver.findElement(By.xpath("//*[@id=\"collateral-tabs\"]/dd[1]/div/div[2]/div["
+                                                + k + "]/div[3]/div[" + j + "]/ul"));
 
                                 var showTimeList = showTimeUl.findElements(By.tagName("li"));
 
@@ -200,7 +205,10 @@ public class CrawlService {
 
                                     log.info("Access show at {} {}", startTime, showDate);
 
-                                    Show show = showRepository.findShowByDateAndStartTimeAndCinema_CinemaIdAndMovie_Id(showDate, startTime, cinema.getCinemaId(), showMovie.getId()).orElse(null);
+                                    Show show = showRepository
+                                            .findShowByDateAndStartTimeAndCinema_CinemaIdAndMovie_Id(
+                                                    showDate, startTime, cinema.getCinemaId(), showMovie.getId())
+                                            .orElse(null);
 
                                     if (show == null) {
                                         show = Show.builder()
@@ -235,32 +243,29 @@ public class CrawlService {
     private Cinema crawlTheaterInfo(City city) {
 
         var nameEl = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[1]/div[2]")
-        ));
+                By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[1]/div[2]")));
 
         String cinemaName = nameEl.getText().trim();
 
-        var addressEl = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.className("theater-address")
-        ));
+        var addressEl = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("theater-address")));
 
         String cinemaAddress = addressEl.getText().trim();
 
-        var faxEl = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[2]/div[2]/div[1]/div/div[2]/div")
-        ));
+        var faxEl = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath(
+                                "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[2]/div[2]/div[1]/div/div[2]/div")));
 
         String cinemaFax = faxEl.getText().trim();
 
-        var hotlineEl = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[2]/div[2]/div[1]/div/div[3]/div")
-        ));
+        var hotlineEl = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath(
+                                "//*[@id=\"top\"]/body/div[3]/div/div[3]/div/div/div/div[1]/div/div[2]/div[2]/div[2]/div[1]/div/div[3]/div")));
 
         String cinemaHotline = hotlineEl.getText().trim();
 
-        var imageSlideEl = driver.findElement(
-                By.className("slideshow")
-        );
+        var imageSlideEl = driver.findElement(By.className("slideshow"));
 
         var imageEls = imageSlideEl.findElements(By.tagName("img"));
 
@@ -272,12 +277,12 @@ public class CrawlService {
                 .city(city)
                 .build();
 
-        Set<CinemaImage> images = imageEls.stream().map(
-                imageEl -> CinemaImage.builder()
+        Set<CinemaImage> images = imageEls.stream()
+                .map(imageEl -> CinemaImage.builder()
                         .imageUrl(imageEl.getAttribute("src").trim())
                         .cinema(cinema)
-                        .build()
-        ).collect(Collectors.toSet());
+                        .build())
+                .collect(Collectors.toSet());
 
         cinema.setImages(images);
 
@@ -297,19 +302,25 @@ public class CrawlService {
             var movieTypeList = movieTypeListEl.findElements(By.tagName("a"));
 
             for (int i = 1; i <= movieTypeList.size(); i++) {
-                var movieNav = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"nav\"]/ol/li[1]")));
+                var movieNav =
+                        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"nav\"]/ol/li[1]")));
                 movieNav.click();
                 var movieTypeEl = driver.findElement(By.xpath("//*[@id=\"nav\"]/ol/li[1]/ul/li[" + i + "]/a"));
                 String movieType = movieTypeEl.getText();
-                String status = movieType.equalsIgnoreCase("Phim Đang Chiếu") ? PredefinedMovieStatus.SHOWING : PredefinedMovieStatus.COMING_SOON;
+                String status = movieType.equalsIgnoreCase("Phim Đang Chiếu")
+                        ? PredefinedMovieStatus.SHOWING
+                        : PredefinedMovieStatus.COMING_SOON;
                 movieTypeEl.click();
                 String movieURL = driver.getCurrentUrl();
-                var movieListEl = driver.findElement(By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/ul"));
+                var movieListEl =
+                        driver.findElement(By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/ul"));
 
                 var movieList = movieListEl.findElements(By.className("film-lists"));
                 for (int j = 1; j <= movieList.size(); j++) {
                     StringBuilder builder = new StringBuilder();
-                    builder.append("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/ul/li[").append(j).append("]");
+                    builder.append("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/ul/li[")
+                            .append(j)
+                            .append("]");
                     var movieEl = driver.findElement(By.xpath(builder.toString()));
                     js = (JavascriptExecutor) driver;
                     js.executeScript("arguments[0].scrollIntoView(true);", movieEl);
@@ -318,7 +329,8 @@ public class CrawlService {
 
                     Movie movie = crawlMovieInfo(status);
 
-                    Movie existingMovie = movieRepository.findByTitle(movie.getTitle()).orElse(null);
+                    Movie existingMovie =
+                            movieRepository.findByTitle(movie.getTitle()).orElse(null);
 
                     if (existingMovie == null) {
                         movies.add(movie);
@@ -360,44 +372,53 @@ public class CrawlService {
         StringBuilder title = new StringBuilder();
         title.append(Objects.isNull(titleEL) ? "" : titleEL.getText().trim());
 
-        var directorEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[2]/div"));
+        var directorEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[2]/div"));
         StringBuilder director = new StringBuilder();
         director.append(Objects.isNull(directorEl) ? "" : directorEl.getText().trim());
 
-        var actorEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[3]/div"));
+        var actorEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[3]/div"));
         StringBuilder actor = new StringBuilder();
         actor.append(Objects.isNull(actorEl) ? "" : actorEl.getText().trim());
 
-        var genreEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[4]/div"));
+        var genreEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[4]/div"));
         StringBuilder genre = new StringBuilder();
         genre.append(Objects.isNull(genreEl) ? "" : genreEl.getText().trim());
 
-        var releaseEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[5]/div"));
+        var releaseEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[5]/div"));
         StringBuilder release = new StringBuilder();
         release.append(Objects.isNull(releaseEl) ? "" : releaseEl.getText().trim());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate releaseDate = release.toString().isEmpty() ? null : LocalDate.parse(release.toString(), formatter);
 
-        var durationEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[6]/div"));
+        var durationEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[6]/div"));
         StringBuilder duration = new StringBuilder();
         duration.append(Objects.isNull(durationEl) ? "" : durationEl.getText().trim());
 
-        var languageEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[7]/div"));
+        var languageEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[7]/div"));
         StringBuilder language = new StringBuilder();
         language.append(Objects.isNull(languageEl) ? "" : languageEl.getText().trim());
 
-        var ratedEl = findElementSafely(driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[8]/div"));
+        var ratedEl = findElementSafely(
+                driver, By.xpath("//*[@id=\"top\"]/body/div[3]/div/div[3]/div[2]/div/div[2]/div[1]/div[4]/div[8]/div"));
         String ratedList = Objects.isNull(ratedEl) ? "" : ratedEl.getText().trim();
         StringBuilder rated = new StringBuilder();
         rated.append(ratedList.split(" - ")[0]);
 
         var descriptionEl = findElementSafely(driver, By.xpath("//*[@id=\"collateral-tabs\"]/dd[1]/div/div"));
         StringBuilder description = new StringBuilder();
-        description.append(Objects.isNull(descriptionEl) ? "" : descriptionEl.getText().trim());
+        description.append(
+                Objects.isNull(descriptionEl) ? "" : descriptionEl.getText().trim());
 
         var trailerEL = findElementSafely(driver, By.xpath("//*[@id=\"collateral-tabs\"]/dd[2]/div/div/div/iframe"));
         StringBuilder trailer = new StringBuilder();
-        trailer.append(Objects.isNull(trailerEL) ? "" : trailerEL.getAttribute("src").trim());
+        trailer.append(
+                Objects.isNull(trailerEL) ? "" : trailerEL.getAttribute("src").trim());
 
         return Movie.builder()
                 .title(title.toString())
@@ -452,9 +473,7 @@ public class CrawlService {
     }
 
     private LocalTime getStartTime(WebElement showTimeLi) {
-        String showTime = showTimeLi.getText().trim()
-                .replace(" PM", "")
-                .replace(" AM", "");
+        String showTime = showTimeLi.getText().trim().replace(" PM", "").replace(" AM", "");
 
         String[] timeParts = showTime.split(":");
         int hour = Integer.parseInt(timeParts[0]);
@@ -498,5 +517,4 @@ public class CrawlService {
 
         return showMovie;
     }
-
 }

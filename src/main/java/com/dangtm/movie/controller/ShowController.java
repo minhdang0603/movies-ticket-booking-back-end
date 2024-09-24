@@ -1,21 +1,19 @@
 package com.dangtm.movie.controller;
 
-import com.dangtm.movie.dto.response.ApiResponse;
-import com.dangtm.movie.dto.response.ShowResponse;
-import com.dangtm.movie.entity.Show;
-import com.dangtm.movie.service.ShowService;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import com.dangtm.movie.dto.response.ApiResponse;
+import com.dangtm.movie.dto.response.ShowResponse;
+import com.dangtm.movie.service.ShowService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +29,7 @@ public class ShowController {
             @RequestParam(value = "movieId") Optional<String> movieId,
             @RequestParam(value = "cinemaId") Optional<String> cinemaId,
             @RequestParam(value = "cityId") Optional<String> cityId,
-            @RequestParam(value = "date") Optional<String> date
-    ) {
+            @RequestParam(value = "date") Optional<String> date) {
 
         return ApiResponse.<List<ShowResponse>>builder()
                 .data(showService.getShows(cinemaId, movieId, cityId, date))
@@ -45,5 +42,4 @@ public class ShowController {
                 .data(showService.getShowById(showId))
                 .build();
     }
-
 }

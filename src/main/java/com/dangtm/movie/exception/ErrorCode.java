@@ -1,6 +1,5 @@
 package com.dangtm.movie.exception;
 
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -24,6 +23,7 @@ public enum ErrorCode {
     SHOW_NOT_EXISTED(1011, "Show does not exist", HttpStatus.NOT_FOUND),
     BOOKING_NOT_EXISTED(1012, "Booking does not exist", HttpStatus.NOT_FOUND),
     CRAWL_FAILED(1013, "Crawl Failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    CHAT_NOT_EXISTED(1014, "Chat does not exist", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;

@@ -1,5 +1,12 @@
 package com.dangtm.movie.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.dangtm.movie.dto.request.PaymentCreationRequest;
 import com.dangtm.movie.dto.response.PaymentResponse;
 import com.dangtm.movie.entity.Booking;
@@ -9,17 +16,10 @@ import com.dangtm.movie.exception.ErrorCode;
 import com.dangtm.movie.mapper.PaymentMapper;
 import com.dangtm.movie.repository.BookingRepository;
 import com.dangtm.movie.repository.PaymentRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,8 @@ public class PaymentService {
 
         Payment payment = paymentMapper.toPayment(request);
 
-        Booking booking = bookingRepository.findById(request.getBookingId())
+        Booking booking = bookingRepository
+                .findById(request.getBookingId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
         payment.setBooking(booking);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, h:mm:ss a");

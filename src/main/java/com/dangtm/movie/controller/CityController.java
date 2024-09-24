@@ -26,6 +26,8 @@ public class CityController {
 
     @GetMapping()
     public ApiResponse<List<City>> getCities(@RequestParam(value = "movieId") Optional<String> movieId) {
-        return ApiResponse.<List<City>>builder().data(cityService.findCities(movieId)).build();
+        return ApiResponse.<List<City>>builder()
+                .data(cityService.findCities(movieId))
+                .build();
     }
 }
