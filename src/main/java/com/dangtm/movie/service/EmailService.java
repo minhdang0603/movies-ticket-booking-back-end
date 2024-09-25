@@ -39,17 +39,17 @@ public class EmailService {
     public void sendMail(String to, String subject, BookingResponse request) {
         MimeMessage message = mailSender.createMimeMessage();
 
-        String showTime = request.getShow().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " "
-                + request.getShow().getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String showTime = request.getShowTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " "
+                + request.getShowDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         Context context = new Context();
         context.setVariable("name", request.getUser().getName());
         context.setVariable(
                 "bookingTime", request.getBookingTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         context.setVariable("numberOfTicket", request.getNumberOfTicket());
-        context.setVariable("showTitle", request.getShow().getMovie().getTitle());
+        context.setVariable("showTitle", request.getMovie().getTitle());
         context.setVariable("showTime", showTime);
-        context.setVariable("showLocation", request.getShow().getCinema().getAddress());
+        context.setVariable("showLocation", request.getCinema().getAddress());
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);

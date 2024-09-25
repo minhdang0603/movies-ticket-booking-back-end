@@ -70,7 +70,7 @@ public class CrawlService {
         System.setProperty("webdriver.chrome.driver", CHROME_PATH);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--user-data-dir=" + CHROME_USER_DATA_PATH);
-
+        options.addArguments("--headless");
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         driver.manage().window().maximize();

@@ -15,6 +15,6 @@ public interface BookingMapper {
     @Mapping(target = "bookingTime", ignore = true)
     Booking toBooking(BookingCreationRequest request);
 
-    @Mapping(target = "show.cinema.images", ignore = true)
+    @Mapping(target = "cinema.images", ignore = true)
     BookingResponse toBookingResponse(Booking booking);
 }

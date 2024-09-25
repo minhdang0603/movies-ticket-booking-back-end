@@ -14,6 +14,6 @@ public interface PaymentMapper {
     @Mapping(target = "booking", ignore = true)
     Payment toPayment(PaymentCreationRequest request);
 
-    @Mapping(target = "booking.show.cinema.images", ignore = true)
+    @Mapping(target = "booking.cinema.images", ignore = true)
     PaymentResponse toPaymentResponse(Payment payment);
 }

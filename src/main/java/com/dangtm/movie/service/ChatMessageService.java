@@ -11,11 +11,13 @@ import com.dangtm.movie.repository.ChatMessageRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -24,41 +26,45 @@ public class ChatMessageService {
     ChatMessageRepository chatMessageRepository;
     ChatMessageMapper chatMessageMapper;
     ChatRoomService chatRoomService;
-    UserMapper userMapper;
 
     public ChatMessageResponse save(ChatMessageRequest request) {
         var chatRoom = chatRoomService
                 .getChatRoom(
-                        request.getSenderId(),
-                        request.getRecipientId(),
+                        request.getSenderEmail(),
+                        request.getRecipientEmail(),
                         true
                 ).orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_EXISTED));
         ChatMessage chatMessage = chatMessageMapper.toChatMessage(request);
         chatMessage.setChatRoom(chatRoom);
         chatMessage = chatMessageRepository.save(chatMessage);
         var response = chatMessageMapper.toChatMessageResponse( chatMessage);
-        response.setSender(userMapper.toUserResponse(chatRoom.getSender()));
-        response.setRecipient(userMapper.toUserResponse(chatRoom.getRecipient()));
+        response.setSenderEmail(chatRoom.getSender().getEmail());
+        response.setRecipientEmail(chatRoom.getRecipient().getEmail());
         return response;
     }
 
     public List<ChatMessageResponse> findChatMessagesByChatId(
-            String senderId, String receiverId
+            String senderEmail, String recipientEmail
     ) {
-        var chatRoom = chatRoomService.getChatRoom(
-                senderId,
-                receiverId,
-                false
-        ).orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_EXISTED));
+        try {
+            var chatRoom = chatRoomService.getChatRoom(
+                    senderEmail,
+                    recipientEmail,
+                    false
+            ).orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_EXISTED));
 
-        var list = chatMessageRepository.findByChatRoom_ChatId(chatRoom.getChatId())
-                .orElse(new ArrayList<>());
+            var list = chatMessageRepository.findByChatRoom_ChatIdOrderByTimestamp(chatRoom.getChatId())
+                    .orElseGet(ArrayList::new);
 
-        return list.stream().map(message -> {
-            var response = chatMessageMapper.toChatMessageResponse(message);
-            response.setSender(userMapper.toUserResponse(message.getChatRoom().getSender()));
-            response.setRecipient(userMapper.toUserResponse(message.getChatRoom().getRecipient()));
-            return response;
-        }).toList();
+            return list.stream().map(message -> {
+                var response = chatMessageMapper.toChatMessageResponse(message);
+                response.setSenderEmail(message.getChatRoom().getSender().getEmail());
+                response.setRecipientEmail(message.getChatRoom().getRecipient().getEmail());
+                return response;
+            }).toList();
+        } catch (AppException e) {
+            log.error(e.getMessage());
+            return List.of();
+        }
     }
 }

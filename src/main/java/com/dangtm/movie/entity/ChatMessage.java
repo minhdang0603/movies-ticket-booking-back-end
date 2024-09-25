@@ -1,6 +1,7 @@
 package com.dangtm.movie.entity;
 
 import java.time.Instant;
+import java.util.Date;
 
 import jakarta.persistence.*;
 
@@ -25,10 +26,10 @@ public class ChatMessage {
     String content;
 
     @Column(name = "timestamp")
-    Instant timestamp;
+    Date timestamp;
 
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "chat_room_id")
     ChatRoom chatRoom;

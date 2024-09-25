@@ -20,20 +20,20 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-     String id;
+    String id;
 
     @Column(name = "chat_id")
-     String chatId;
+    String chatId;
 
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "sender_id")
-     User sender;
+    User sender;
 
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "recipient_id")
-     User recipient;
+    User recipient;
 }

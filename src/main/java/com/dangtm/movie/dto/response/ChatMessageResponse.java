@@ -12,8 +12,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatMessageResponse {
     String id;
-    UserResponse sender;
-    UserResponse recipient;
+    String senderEmail;
+    String recipientEmail;
     String content;
     Date timestamp;
 }
