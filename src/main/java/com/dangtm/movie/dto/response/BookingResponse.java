@@ -4,10 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import com.dangtm.movie.entity.Audio;
-import com.dangtm.movie.entity.Cinema;
-import com.dangtm.movie.entity.Movie;
 import jakarta.persistence.*;
+
+import com.dangtm.movie.entity.Audio;
+import com.dangtm.movie.entity.Movie;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

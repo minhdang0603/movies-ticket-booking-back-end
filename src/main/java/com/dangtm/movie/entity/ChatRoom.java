@@ -1,8 +1,5 @@
 package com.dangtm.movie.entity;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import jakarta.persistence.*;
 
 import lombok.*;

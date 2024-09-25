@@ -1,9 +1,10 @@
 package com.dangtm.movie.mapper;
 
+import org.mapstruct.Mapper;
+
 import com.dangtm.movie.dto.request.ChatMessageRequest;
 import com.dangtm.movie.dto.response.ChatMessageResponse;
 import com.dangtm.movie.entity.ChatMessage;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ChatMessageMapper {

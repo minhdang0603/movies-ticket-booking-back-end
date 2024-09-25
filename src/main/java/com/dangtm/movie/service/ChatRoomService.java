@@ -1,16 +1,18 @@
 package com.dangtm.movie.service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.dangtm.movie.entity.ChatRoom;
 import com.dangtm.movie.exception.AppException;
 import com.dangtm.movie.exception.ErrorCode;
 import com.dangtm.movie.repository.ChatRoomRepository;
 import com.dangtm.movie.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +22,9 @@ public class ChatRoomService {
     ChatRoomRepository chatRoomRepository;
     UserRepository userRepository;
 
-    public Optional<ChatRoom> getChatRoom(
-            String senderEmail,
-            String recipientEmail,
-            boolean createNewRoomIfNotExists
-    ) {
-        return chatRoomRepository.findChatRoomBySender_EmailAndRecipient_Email(senderEmail, recipientEmail)
+    public Optional<ChatRoom> getChatRoom(String senderEmail, String recipientEmail, boolean createNewRoomIfNotExists) {
+        return chatRoomRepository
+                .findChatRoomBySender_EmailAndRecipient_Email(senderEmail, recipientEmail)
                 .or(() -> {
                     if (createNewRoomIfNotExists) {
                         return Optional.of(createChat(senderEmail, recipientEmail));
@@ -37,10 +36,11 @@ public class ChatRoomService {
     private ChatRoom createChat(String senderEmail, String recipientEmail) {
         var chatId = String.format("%s_%s", senderEmail, recipientEmail);
 
-        var sender = userRepository.findByEmail(senderEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var sender =
+                userRepository.findByEmail(senderEmail).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        var recipient = userRepository.findByEmail(recipientEmail)
+        var recipient = userRepository
+                .findByEmail(recipientEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         ChatRoom senderRecipient = ChatRoom.builder()

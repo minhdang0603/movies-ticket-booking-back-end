@@ -1,6 +1,5 @@
 package com.dangtm.movie.entity;
 
-import java.time.Instant;
 import java.util.Date;
 
 import jakarta.persistence.*;
