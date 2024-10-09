@@ -2,10 +2,12 @@ spring:
   application:
     name: movie_ticket_booking
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/movie_ticket_booking}
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3307/movie_ticket_booking}
     username: ${DBMS_USERNAME:root}
     password: ${DBMS_PASSWORD:1163ruabin}
-#  jpa:
+
+
+  #  jpa:
 #    show-sql: true
   mail:
     protocol: smtp

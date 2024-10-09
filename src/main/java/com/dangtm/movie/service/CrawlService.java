@@ -72,6 +72,10 @@ public class CrawlService {
         options.addArguments("--user-data-dir=" + CHROME_USER_DATA_PATH);
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
+
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60)); // Page load timeout
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // Implicit wait timeout
+
         wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         driver.manage().window().maximize();
         try {
@@ -329,12 +333,16 @@ public class CrawlService {
 
                     Movie movie = crawlMovieInfo(status);
 
+                    log.info("Access movie: {}", movie.getTitle());
+
                     Movie existingMovie =
                             movieRepository.findByTitle(movie.getTitle()).orElse(null);
 
                     if (existingMovie == null) {
+                        log.info("Add movie: {}", movie.getTitle());
                         movies.add(movie);
                     } else {
+                        log.info("Update movie: {}", movie.getTitle());
                         existingMovie.setTitle(movie.getTitle());
                         existingMovie.setDescription(movie.getDescription());
                         existingMovie.setReleaseDate(movie.getReleaseDate());

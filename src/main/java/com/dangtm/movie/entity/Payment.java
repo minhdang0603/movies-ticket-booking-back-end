@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "payment_id")
+    @Column(name = "id")
     String id;
 
     @Column(name = "amount")

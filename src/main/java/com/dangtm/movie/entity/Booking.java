@@ -20,7 +20,7 @@ import lombok.experimental.FieldDefaults;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "booking_id")
+    @Column(name = "id")
     String id;
 
     @Column(name = "booking_time")

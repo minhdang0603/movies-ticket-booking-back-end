@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "movie_id")
+    @Column(name = "id")
     String id;
 
     @Column(name = "title")

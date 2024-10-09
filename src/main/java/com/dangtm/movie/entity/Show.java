@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "shows")
 public class Show {
     @Id
-    @Column(name = "show_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 

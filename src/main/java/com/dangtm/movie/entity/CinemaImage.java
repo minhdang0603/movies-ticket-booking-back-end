@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class CinemaImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "image_id")
+    @Column(name = "id")
     String imageId;
 
     @Column(name = "image_url")

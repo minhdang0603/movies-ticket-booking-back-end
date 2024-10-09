@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "city_id")
+    @Column(name = "id")
     String id;
 
     @Column(name = "name")
