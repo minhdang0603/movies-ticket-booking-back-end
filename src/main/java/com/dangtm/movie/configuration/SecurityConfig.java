@@ -27,7 +27,7 @@ public class SecurityConfig {
         "/users", "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
 
-    private final String[] PUBLIC_GET_END_POINTS = {"/movies/**", "/cities", "/cinemas/**", "/shows"};
+    private final String[] PUBLIC_GET_END_POINTS = {"/movies/**", "/cities", "/cinemas/**", "/shows", "/search/**"};
 
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;

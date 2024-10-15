@@ -7,7 +7,7 @@ spring:
     password: ${DBMS_PASSWORD:1163ruabin}
 
 
-  #  jpa:
+#    jpa:
 #    show-sql: true
   mail:
     protocol: smtp
