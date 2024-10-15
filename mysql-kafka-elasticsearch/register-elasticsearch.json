@@ -1,0 +1,23 @@
+{
+    "name": "es_connector",
+    "config": {
+        "type.name": "_doc",
+        "connector.client.config.override.policy": "All",
+        "consumer.override.group.id": "movie_db-consumer-group",
+        "consumer.override.client.id": "movie-connector-client",
+        "name": "es_connector",
+        "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+        "tasks.max": "1",
+        "topics": "movie, cinema, shows",
+        "connection.url": "http://elasticsearch:9200",
+        "max.retries": "2",
+        "errors.tolerance": "all",
+        "errors.log.enable": "true",
+        "errors.log.include.messages": "true",
+        "retry.backoff.ms": "3000",
+        "schema.ignore": "true",
+        "schemas.enable": "false",
+        "behavior.on.null.values": "DELETE",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter"
+    }
+}

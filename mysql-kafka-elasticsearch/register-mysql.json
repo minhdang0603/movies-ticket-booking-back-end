@@ -1,0 +1,39 @@
+{
+    "name": "mysql_connector",
+    "config": {
+        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+        "tasks.max": "1",
+        "database.hostname": "mysql",
+        "database.port": "3306",
+        "database.user": "debezium",
+        "database.password": "debezium",
+        "database.server.id": "184054",
+        "topic.prefix": "mysql",
+        "database.include.list": "movie_ticket_booking",
+        "table.include.list": "movie_ticket_booking.movie,movie_ticket_booking.shows,movie_ticket_booking.cinema",
+        "schema.history.internal.kafka.topic": "schema-changes.movie_ticket_booking",
+        "schema.history.internal.kafka.bootstrap.servers": "broker:29092",
+        "transforms.reroute_topic.type": "io.debezium.transforms.ByLogicalTableRouter",
+        "transforms.reroute_topic.key.enforce.uniqueness": "false",
+        "transforms.reroute_topic.topic.regex": "^mysql\\.movie_ticket_booking\\.(.+)$",
+        "transforms.reroute_topic.topic.replacement": "movie_db.$1",
+        "transforms": "unwrap,reroute_topic,extractKey",
+
+        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+        "transforms.unwrap.drop.tombstones": "false",
+
+        "predicates": "topicNameMatch",
+        "predicates.topicNameMatch.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+        "predicates.topicNameMatch.pattern": "movie_db\\..+",
+
+        "transforms.extractKey.type":"org.apache.kafka.connect.transforms.ExtractField$Key",
+        "transforms.extractKey.field":"id",
+        "transforms.extractKey.predicate": "topicNameMatch",
+
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "key.converter.schema.registry.url": "http://schema-registry:8081",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "snapshot.mode": "initial"
+    }
+}

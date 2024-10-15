@@ -1,0 +1,430 @@
+# docker run -it --rm --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 quay.io/debezium/zookeeper:2.7
+# docker run -it --rm --name kafka -p 9092:9092 --link zookeeper:zookeeper quay.io/debezium/kafka:2.7
+# docker run -it --rm --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=debezium -e MYSQL_USER=mysqluser 
+# -e MYSQL_PASSWORD=mysqlpw quay.io/debezium/example-mysql:2.7
+# docker run -it --rm --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=my_connect_configs -e OFFSET_STORAGE_TOPIC=
+# my_connect_offsets -e STATUS_STORAGE_TOPIC=my_connect_statuses --link kafka:kafka --link mysql:mysql quay.io/debezium/connect:2.7
+# docker run -it --rm --name es-sink-connector -e CONNECT_BOOTSTRAP_SERVERS=kafka:9092 -e CONNECT_REST_PORT=8083 -e 
+# CONNECT_GROUP_ID="connect-cluster" -e CONNECT_CONFIG_STORAGE_TOPIC="connect-configs" 
+# -e CONNECT_OFFSET_STORAGE_TOPIC="connect-offsets"
+# -e CONNECT_STATUS_STORAGE_TOPIC="connect-status" -e CONNECT_KEY_CONVERTER="org.apache.kafka.connect.json.JsonConverter" 
+# -e CONNECT_VALUE_CONVERTER="org.apache.kafka.connect.json.JsonConverter" -e CONNECT_INTERNAL_KEY_CONVERTER="org.apache.kafka.connect.json.JsonConverter"
+# -e CONNECT_INTERNAL_VALUE_CONVERTER="org.apache.kafka.connect.json.JsonConverter" -e CONNECT_REST_ADVERTISED_HOST_NAME="localhost" 
+# -e CONNECT_PLUGIN_PATH="/usr/share/java,/etc/kafka-connect/jars" -p 8083:8083 confluentinc/cp-kafka-connect:latest
+
+version: '3.0'
+
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-cp
+    networks:
+      - minhdang-network
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  
+  broker:
+    image: confluentinc/cp-kafka:latest
+    container_name: broker
+    networks:
+      - minhdang-network
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    container_name: schema-registry
+    networks:
+      - minhdang-network
+    depends_on:
+      - zookeeper
+      - broker
+    links:
+      - zookeeper
+      - broker
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker:29092
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka_ui
+    networks:
+      - minhdang-network
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+    ports:
+      - "9089:8080"
+    depends_on:
+      - broker
+      - schema-registry
+    links:
+      - broker
+      - schema-registry
+
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:latest
+    container_name: kafka-connect
+    networks:
+      - minhdang-network
+    depends_on:
+      - broker
+      - schema-registry
+    links:
+      - broker
+      - schema-registry
+      - elasticsearch
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: broker:29092
+      CONNECT_GROUP_ID: "kafka-connect"
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+      CONNECT_REST_PORT: 8083
+
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+
+      CONNECT_REPLICATION_FACTOR: 1
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_INTERNAL_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+
+      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
+      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+    command:
+      - bash
+      - -c
+      - |
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:latest
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8083/connectors"]
+    #   interval: 60s
+    #   timeout: 10s
+    #   retries: 3
+
+  ksqldb:
+    image: confluentinc/ksqldb-server:latest
+    hostname: ksqldb
+    container_name: ksqldb
+    networks:
+      - minhdang-network
+    links:
+      - schema-registry
+      - kafka-connect
+      - broker
+    depends_on:
+      - broker
+      - kafka-connect
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: broker:29092
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      KSQL_KSQL_CONNECT_URL: http://kafka-connect:8083
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KSQL_KSQL_SERVICE_ID: confluent_rmoff_01
+      KSQL_KSQL_HIDDEN_TOPICS: '^_.*'
+  
+  # ksql-cli: 
+  #   image: confluentinc/ksqldb-cli:latest
+  #   container_name: ksql-cli
+  #   depends_on:
+  #     kafka-connect:
+  #       condition: service_healthy
+  #   networks:
+  #     - minhdang-network
+  #   links:
+  #     - ksqldb
+  #     - schema-registry
+  #   volumes:
+  #     - ./init-ksql.sql:/data/scripts/init-ksql.sql
+  #   entrypoint: 
+  #     - /bin/bash
+  #     - -c
+  #     - |
+  #       echo -e "\n\n⏳ Waiting for ksqlDB to be available before launching CLI\n"
+  #       while [ $$(curl -s -o /dev/null -w %{http_code} http://ksqldb:8088/) -eq 000 ]
+  #       do 
+  #         echo -e $$(date) "ksqlDB Server HTTP state: " $$(curl -s -o /dev/null -w %{http_code} http://ksqldb:8088/) " (waiting for 200)"
+  #         sleep 5
+  #       done
+  #       echo -e "\n\n-> Running SQL commands\n"
+  #       cat /data/scripts/init-ksql.sql <(echo -e '\nEXIT') | ksql http://ksqldb:8088
+  #       echo -e "\n\n-> Sleeping…\n"
+  #       sleep infinity
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+    networks:
+      - minhdang-network
+    environment:
+      node.name: "elasticsearch"
+      cluster.name: "elasticsearch-kafka"
+      bootstrap.memory_lock: 'true'
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      discovery.type: "single-node"
+      node.store.allow_mmap: "false"
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    command: 
+      - bash
+      - -c
+      - |
+        /usr/local/bin/docker-entrypoint.sh & 
+        echo "Waiting for Elasticsearch to start ⏳"
+        while [ $$(curl -s -o /dev/null -w %{http_code} http://localhost:9200/) -ne 200 ]; do 
+          echo -e $$(date) " Elasticsearch listener HTTP state: " $$(curl -s -o /dev/null -w %{http_code} http://localhost:9200/) " (waiting for 200)"
+          sleep 5 
+        done
+
+        # Create index after Elasticsearch is running
+        curl -s -XPUT "http://localhost:9200/cinema" -H 'Content-Type: application/json' -d'
+        {
+          "settings": {
+              "analysis": {
+                  "analyzer": {
+                      "autocomplete": {
+                          "tokenizer": "autocomplete",
+                          "filter": [
+                              "lowercase"
+                          ]
+                      },
+                      "autocomplete_search": {
+                          "tokenizer": "lowercase"
+                      }
+                  },
+                  "tokenizer": {
+                      "autocomplete": {
+                          "type": "edge_ngram",
+                          "min_gram": 2,
+                          "max_gram": 15,
+                          "token_chars": [
+                              "letter",
+                              "digit"  // Allow digits for broader search capability
+                          ]
+                      }
+                  }
+              }
+          },
+          "mappings": {
+              "properties": {
+                  "id": {
+                      "type": "keyword"
+                  },
+                  "name": {
+                      "type": "text",
+                      "analyzer": "autocomplete",
+                      "search_analyzer": "autocomplete_search"
+                  },
+                  "location": {
+                      "type": "geo_point"
+                  }
+              }
+          }
+        }'
+
+        curl -s -XPUT "http://localhost:9200/movie" -H 'Content-Type: application/json' -d'
+        {
+          "settings": {
+              "analysis": {
+                  "analyzer": {
+                      "autocomplete": {
+                          "tokenizer": "autocomplete",
+                          "filter": [
+                              "lowercase"
+                          ]
+                      },
+                      "autocomplete_search": {
+                          "tokenizer": "lowercase"
+                      }
+                  },
+                  "tokenizer": {
+                      "autocomplete": {
+                          "type": "edge_ngram",
+                          "min_gram": 2,
+                          "max_gram": 15,
+                          "token_chars": [
+                              "letter",
+                              "digit"  // Allow digits for broader search capability
+                          ]
+                      }
+                  }
+              }
+          },
+          "mappings": {
+              "properties": {
+                  "id": {
+                      "type": "keyword"
+                  },
+                  "title": {
+                      "type": "text",
+                      "analyzer": "autocomplete",
+                      "search_analyzer": "autocomplete_search"
+                  },
+                  "director": {
+                      "type": "text"
+                  },
+                  "actors": {
+                      "type": "text"
+                  },
+                  "description": {
+                      "type": "text"
+                  }
+              }
+          }
+        }'
+
+        curl -s -XPUT "http://localhost:9200/shows" -H 'Content-Type: application/json' -d'
+        {
+          "settings": {
+              "analysis": {
+                  "analyzer": {
+                      "autocomplete": {
+                          "tokenizer": "autocomplete",
+                          "filter": [
+                              "lowercase"
+                          ]
+                      },
+                      "autocomplete_search": {
+                          "tokenizer": "lowercase"
+                      }
+                  },
+                  "tokenizer": {
+                      "autocomplete": {
+                          "type": "edge_ngram",
+                          "min_gram": 2,
+                          "max_gram": 15,
+                          "token_chars": [
+                              "letter",
+                              "digit"
+                          ]
+                      }
+                  }
+              }
+          },
+          "mappings": {
+              "properties": {
+                  "id": {
+                      "type": "keyword"
+                  },
+                  "price": {
+                      "type": "integer"
+                  },
+                  "movie": {
+                      "properties": {
+                          "id": {
+                              "type": "text"
+                          },
+                          "title": {
+                              "type": "text",
+                              "analyzer": "autocomplete",
+                              "search_analyzer": "autocomplete_search"
+                          },
+                          "director": {
+                              "type": "text",
+                              "analyzer": "autocomplete",
+                              "search_analyzer": "autocomplete_search"
+                          },
+                          "actors": {
+                              "type": "text",
+                              "analyzer": "autocomplete",
+                              "search_analyzer": "autocomplete_search"
+                          },
+                          "description": {
+                              "type": "text",
+                              "analyzer": "autocomplete",
+                              "search_analyzer": "autocomplete_search"
+                          }
+                      }
+                  },
+                  "cinema": {
+                      "properties": {
+                          "id": {
+                              "type": "text"
+                          },
+                          "cinema_name": {
+                              "type": "text"
+                          },
+                          "location": {
+                              "type": "geo_point"
+                          }
+                      }
+                  }
+              }
+          }
+        }'
+        sleep infinity
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.10
+    container_name: kibana
+    networks:
+      - minhdang-network
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  minhdang-network:
+    external: true
