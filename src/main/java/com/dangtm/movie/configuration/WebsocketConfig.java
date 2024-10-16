@@ -3,6 +3,8 @@ package com.dangtm.movie.configuration;
 import java.text.ParseException;
 import java.util.List;
 
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -38,11 +40,14 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @NonFinal
+    @Value("${front-end.url}")
+    protected String FRONT_END_URL;
     AuthenticationService authenticationService;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins(FRONT_END_URL).withSockJS();
     }
 
     @Override

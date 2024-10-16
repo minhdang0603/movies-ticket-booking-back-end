@@ -1,5 +1,6 @@
 package com.dangtm.movie.configuration;
 
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,10 @@ public class SecurityConfig {
 
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
+
+    @NonFinal
+    @Value("${front-end.url}")
+    protected String FRONT_END_URL;
 
     private CustomJwtDecoder jwtDecoder;
 
@@ -70,7 +75,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.addAllowedOrigin("http://localhost:3000");
+        corsConfiguration.addAllowedOrigin(FRONT_END_URL);
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowCredentials(true);
