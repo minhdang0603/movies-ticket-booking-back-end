@@ -234,41 +234,13 @@ services:
         # Create index after Elasticsearch is running
         curl -s -XPUT "http://localhost:9200/cinema" -H 'Content-Type: application/json' -d'
         {
-          "settings": {
-              "analysis": {
-                  "analyzer": {
-                      "autocomplete": {
-                          "tokenizer": "autocomplete",
-                          "filter": [
-                              "lowercase"
-                          ]
-                      },
-                      "autocomplete_search": {
-                          "tokenizer": "lowercase"
-                      }
-                  },
-                  "tokenizer": {
-                      "autocomplete": {
-                          "type": "edge_ngram",
-                          "min_gram": 2,
-                          "max_gram": 15,
-                          "token_chars": [
-                              "letter",
-                              "digit"  // Allow digits for broader search capability
-                          ]
-                      }
-                  }
-              }
-          },
           "mappings": {
               "properties": {
                   "id": {
                       "type": "keyword"
                   },
                   "name": {
-                      "type": "text",
-                      "analyzer": "autocomplete",
-                      "search_analyzer": "autocomplete_search"
+                      "type": "search_as_you_type"
                   },
                   "location": {
                       "type": "geo_point"
@@ -279,50 +251,19 @@ services:
 
         curl -s -XPUT "http://localhost:9200/movie" -H 'Content-Type: application/json' -d'
         {
-          "settings": {
-              "analysis": {
-                  "analyzer": {
-                      "autocomplete": {
-                          "tokenizer": "autocomplete",
-                          "filter": [
-                              "lowercase"
-                          ]
-                      },
-                      "autocomplete_search": {
-                          "tokenizer": "lowercase"
-                      }
-                  },
-                  "tokenizer": {
-                      "autocomplete": {
-                          "type": "edge_ngram",
-                          "min_gram": 2,
-                          "max_gram": 15,
-                          "token_chars": [
-                              "letter",
-                              "digit"  // Allow digits for broader search capability
-                          ]
-                      }
-                  }
-              }
-          },
           "mappings": {
               "properties": {
                   "id": {
                       "type": "keyword"
                   },
                   "title": {
-                      "type": "text",
-                      "analyzer": "autocomplete",
-                      "search_analyzer": "autocomplete_search"
+                      "type": "search_as_you_type"
                   },
                   "director": {
-                      "type": "text"
+                      "type": "search_as_you_type"
                   },
                   "actors": {
-                      "type": "text"
-                  },
-                  "description": {
-                      "type": "text"
+                      "type": "search_as_you_type"
                   }
               }
           }
@@ -330,32 +271,6 @@ services:
 
         curl -s -XPUT "http://localhost:9200/shows" -H 'Content-Type: application/json' -d'
         {
-          "settings": {
-              "analysis": {
-                  "analyzer": {
-                      "autocomplete": {
-                          "tokenizer": "autocomplete",
-                          "filter": [
-                              "lowercase"
-                          ]
-                      },
-                      "autocomplete_search": {
-                          "tokenizer": "lowercase"
-                      }
-                  },
-                  "tokenizer": {
-                      "autocomplete": {
-                          "type": "edge_ngram",
-                          "min_gram": 2,
-                          "max_gram": 15,
-                          "token_chars": [
-                              "letter",
-                              "digit"
-                          ]
-                      }
-                  }
-              }
-          },
           "mappings": {
               "properties": {
                   "id": {
@@ -370,24 +285,16 @@ services:
                               "type": "text"
                           },
                           "title": {
-                              "type": "text",
-                              "analyzer": "autocomplete",
-                              "search_analyzer": "autocomplete_search"
+                              "type": "search_as_you_type"
                           },
                           "director": {
-                              "type": "text",
-                              "analyzer": "autocomplete",
-                              "search_analyzer": "autocomplete_search"
+                              "type": "search_as_you_type"
                           },
                           "actors": {
-                              "type": "text",
-                              "analyzer": "autocomplete",
-                              "search_analyzer": "autocomplete_search"
+                              "type": "search_as_you_type"
                           },
                           "description": {
-                              "type": "text",
-                              "analyzer": "autocomplete",
-                              "search_analyzer": "autocomplete_search"
+                              "type": "search_as_you_type"
                           }
                       }
                   },
@@ -397,7 +304,7 @@ services:
                               "type": "text"
                           },
                           "cinema_name": {
-                              "type": "text"
+                              "type": "search_as_you_type"
                           },
                           "location": {
                               "type": "geo_point"

@@ -1,9 +1,9 @@
 package com.dangtm.movie.dto.response;
 
+import java.util.Date;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Instant;
 
 @Data
 @Builder
@@ -12,5 +12,5 @@ import java.time.Instant;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
     String token;
-    Instant expiryTime;
+    Date expiryTime;
 }

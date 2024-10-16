@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .token(token)
                 .expiryTime(new Date(Instant.now()
                         .plus(VALIDATION_DURATION, ChronoUnit.SECONDS)
-                        .toEpochMilli()).toInstant())
+                        .toEpochMilli()))
                 .build();
     }
 
@@ -129,7 +129,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String token = generateToken(user);
 
-        return AuthenticationResponse.builder().token(token).expiryTime(expiryTime.toInstant()).build();
+        return AuthenticationResponse.builder()
+                .token(token)
+                .expiryTime(expiryTime)
+                .build();
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {

@@ -36,7 +36,7 @@ ksql http://ksqldb:8088'
 
 ## KSQL Command to register connection with MySQL server:
 ```sql
-CREATE SOURCE CONNECTOR source_mysql WITH (
+CREATE SOURCE CONNECTOR "mysql_connector" WITH (
     'connector.class' = 'io.debezium.connector.mysql.MySqlConnector',
     'tasks.max' = '1',
     'database.hostname' = 'mysql',
@@ -185,12 +185,12 @@ EMIT CHANGES;
 ```
 ## KSQL Command to register connection with Elasticsearch server:
 ```sql
-CREATE SOURCE CONNECTOR source_mysql WITH (
+CREATE SOURCE CONNECTOR "es_connector" WITH (
     'type.name' = '_doc',
     'connector.client.config.override.policy' = 'All',
     'consumer.override.group.id' = 'movie_db-consumer-group',
     'consumer.override.client.id' = 'movie-connector-client',
-    'name' = 'es-connector',
+    'name' = 'es_connector',
     'connector.class' = 'io.confluent.connect.elasticsearch.ElasticsearchSinkConnector',
     'tasks.max' = '1',
     'topics' = 'movie, cinema, shows',

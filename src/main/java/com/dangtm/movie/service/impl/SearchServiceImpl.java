@@ -16,7 +16,9 @@ import com.dangtm.movie.util.ElasticsearchUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -26,7 +28,15 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<MovieIndex> autoSuggestMovie(String query) {
-        List<String> searchFields = List.of("title", "director", "actors");
+        List<String> searchFields = List.of(
+                "title",
+                "title._2gram",
+                "title._3gram",
+                "director",
+                "director._2gram",
+                "director._3gram",
+                "actors._2gram",
+                "actors._3gram");
 
         Query suggestQuery = ElasticsearchUtil.createMovieAutoSuggestQuery(query, searchFields);
 
@@ -37,10 +47,11 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<CinemaIndex> autoSuggestCinema(String query, double lat, double lon, String distance) {
-        Query suggestQuery = ElasticsearchUtil.createCinemaAutoSuggestQuery(query, "name", lat, lon, distance);
+        String searchField = "name";
+
+        Query suggestQuery = ElasticsearchUtil.createCinemaAutoSuggestQuery(query, searchField, lat, lon, distance);
 
         SearchHits<CinemaIndex> hits = elasticsearchOperations.search(suggestQuery, CinemaIndex.class);
-
         return hits.stream().map(SearchHit::getContent).toList();
     }
 }
