@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Objects;
 import javax.crypto.spec.SecretKeySpec;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -17,6 +18,7 @@ import com.dangtm.movie.dto.request.IntrospectRequest;
 import com.dangtm.movie.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 
+@Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
 
@@ -41,8 +43,8 @@ public class CustomJwtDecoder implements JwtDecoder {
             if (!response.isValid()) {
                 throw new JwtException("Token invalid");
             }
-        } catch (ParseException | JOSEException e) {
-            throw new JwtException(e.getMessage());
+        } catch (ParseException | JOSEException | JwtException e) {
+            log.error(e.getMessage());
         }
 
         if (Objects.isNull(nimbusJwtDecoder)) {

@@ -47,7 +47,9 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins(FRONT_END_URL).withSockJS();
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins(FRONT_END_URL)
+                .withSockJS();
     }
 
     @Override
@@ -85,7 +87,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
                             if (!response.isValid()) {
                                 throw new JwtException("Token invalid");
                             }
-                        } catch (ParseException | JOSEException e) {
+                        } catch (ParseException | JOSEException | JwtException e) {
                             log.error(e.getMessage());
                             return null;
                         }

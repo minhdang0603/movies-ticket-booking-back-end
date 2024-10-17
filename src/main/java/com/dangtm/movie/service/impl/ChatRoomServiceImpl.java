@@ -2,6 +2,7 @@ package com.dangtm.movie.service.impl;
 
 import java.util.Optional;
 
+import com.dangtm.movie.util.ChatUtil;
 import org.springframework.stereotype.Service;
 
 import com.dangtm.movie.entity.ChatRoom;
@@ -36,7 +37,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     private ChatRoom createChat(String senderEmail, String recipientEmail) {
-        var chatId = String.format("%s_%s", senderEmail, recipientEmail);
+        var chatId = ChatUtil.generateChatTopic(senderEmail, recipientEmail);
 
         var sender =
                 userRepository.findByEmail(senderEmail).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

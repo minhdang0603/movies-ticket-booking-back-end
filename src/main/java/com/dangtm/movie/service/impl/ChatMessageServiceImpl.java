@@ -3,6 +3,10 @@ package com.dangtm.movie.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dangtm.movie.util.ChatUtil;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.dangtm.movie.dto.request.ChatMessageRequest;
@@ -29,11 +33,26 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     ChatMessageRepository chatMessageRepository;
     ChatMessageMapper chatMessageMapper;
     ChatRoomService chatRoomService;
+    SimpMessagingTemplate messagingTemplate;
+    KafkaTemplate<String, ChatMessageRequest> kafkaTemplate;
 
     @Override
-    public ChatMessageResponse save(ChatMessageRequest request) {
+    public void sendMessage(ChatMessageRequest request) {
+        String topic = "chat-" + ChatUtil.generateChatTopic(request.getSenderEmail(), request.getRecipientEmail());
+        kafkaTemplate.send(topic, request);
+        log.info("Sent private message to topic: {}", topic);
+    }
+
+    @Override
+    public void handleMessage(ChatMessageRequest request) {
+        log.info("Received message from Kafka: {}", request);
+        var response = this.save(request);
+        messagingTemplate.convertAndSendToUser(request.getRecipientEmail(), "/queue/messages", response);
+    }
+
+    private ChatMessageResponse save(ChatMessageRequest request) {
         var chatRoom = chatRoomService
-                .getChatRoom(request.getSenderEmail(), request.getRecipientEmail(), true)
+                .getChatRoom(request.getSenderEmail(), request.getRecipientEmail(), false)
                 .orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_EXISTED));
         ChatMessage chatMessage = chatMessageMapper.toChatMessage(request);
         chatMessage.setChatRoom(chatRoom);
@@ -48,7 +67,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public List<ChatMessageResponse> findChatMessagesByChatId(String senderEmail, String recipientEmail) {
         try {
             var chatRoom = chatRoomService
-                    .getChatRoom(senderEmail, recipientEmail, false)
+                    .getChatRoom(senderEmail, recipientEmail, true)
                     .orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_EXISTED));
 
             var list = chatMessageRepository

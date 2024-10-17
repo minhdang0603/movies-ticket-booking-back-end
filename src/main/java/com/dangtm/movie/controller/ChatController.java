@@ -2,6 +2,7 @@ package com.dangtm.movie.controller;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,18 +19,18 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatController {
 
     ChatMessageService chatMessageService;
-    SimpMessagingTemplate simpMessagingTemplate;
 
-    @MessageMapping("/chat")
+    @MessageMapping("/chat.sendMessage")
     public void processMessage(@Payload ChatMessageRequest request) {
-        ChatMessageResponse response = chatMessageService.save(request);
-        simpMessagingTemplate.convertAndSendToUser(request.getRecipientEmail(), "/queue/messages", response);
+        chatMessageService.sendMessage(request);
+        log.info("Private message sent from {} to {}", request.getSenderEmail(), request.getRecipientEmail());
     }
 
     @GetMapping("/messages/{senderEmail}/{recipientEmail}")
