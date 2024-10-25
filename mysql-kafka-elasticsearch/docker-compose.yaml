@@ -167,34 +167,6 @@ services:
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KSQL_KSQL_SERVICE_ID: confluent_rmoff_01
       KSQL_KSQL_HIDDEN_TOPICS: '^_.*'
-  
-  # ksql-cli: 
-  #   image: confluentinc/ksqldb-cli:latest
-  #   container_name: ksql-cli
-  #   depends_on:
-  #     kafka-connect:
-  #       condition: service_healthy
-  #   networks:
-  #     - minhdang-network
-  #   links:
-  #     - ksqldb
-  #     - schema-registry
-  #   volumes:
-  #     - ./init-ksql.sql:/data/scripts/init-ksql.sql
-  #   entrypoint: 
-  #     - /bin/bash
-  #     - -c
-  #     - |
-  #       echo -e "\n\n⏳ Waiting for ksqlDB to be available before launching CLI\n"
-  #       while [ $$(curl -s -o /dev/null -w %{http_code} http://ksqldb:8088/) -eq 000 ]
-  #       do 
-  #         echo -e $$(date) "ksqlDB Server HTTP state: " $$(curl -s -o /dev/null -w %{http_code} http://ksqldb:8088/) " (waiting for 200)"
-  #         sleep 5
-  #       done
-  #       echo -e "\n\n-> Running SQL commands\n"
-  #       cat /data/scripts/init-ksql.sql <(echo -e '\nEXIT') | ksql http://ksqldb:8088
-  #       echo -e "\n\n-> Sleeping…\n"
-  #       sleep infinity
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10

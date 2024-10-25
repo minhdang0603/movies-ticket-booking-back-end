@@ -32,7 +32,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_GET_END_POINTS = {"/movies/**", "/cities", "/cinemas/**", "/shows", "/search/**"};
 
-    @Value("${jwt.signerKey}")
+    @Value("${jwt.signer-key}")
     protected String SIGNER_KEY;
 
     @NonFinal

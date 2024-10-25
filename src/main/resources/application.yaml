@@ -41,16 +41,16 @@ server:
     context-path: /api
 
 jwt:
-  signerKey: EPW3S9sIrpjBSxoWM3JzKIjS8ETuHYN1770xNYEPoUbBWhSanStMNSgiYhKHGokm
+  signer-key: EPW3S9sIrpjBSxoWM3JzKIjS8ETuHYN1770xNYEPoUbBWhSanStMNSgiYhKHGokm
   valid-duration: 3600 # in seconds
   refreshable-duration: 36000 # in seconds
 
 mail:
-  fromMail:
+  from-mail:
     addr: minhdan0603@yandex.com
 
 front-end:
-  url: ${FRONT_END_URL:http://localhost:3000/}
+  url: ${FRONT_END_URL:https://movies-ticket-booking-front-end.vercel.app/}
 
 chrome:
   driver:

@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     InvalidatedTokenRepository tokenRepository;
 
     @NonFinal
-    @Value("${jwt.signerKey}")
+    @Value("${jwt.signer-key}")
     protected String SIGNER_KEY;
 
     @NonFinal

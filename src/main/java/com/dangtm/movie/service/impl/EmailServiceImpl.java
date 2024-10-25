@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
     TemplateEngine templateEngine;
 
     @NonFinal
-    @Value("${mail.fromMail.addr}")
+    @Value("${mail.from-mail.addr}")
     String from;
 
     @Override

@@ -178,8 +178,8 @@ SELECT
         "location":=c.location
     ) AS "cinema"
 FROM shows_stream s
-JOIN movie m ON s.movie_id = m.id
-JOIN cinema_table c ON s.cinema_id = c.id
+LEFT JOIN movie m ON s.movie_id = m.id
+LEFT JOIN cinema_table c ON s.cinema_id = c.id
 partition by s.id
 EMIT CHANGES;
 ```
