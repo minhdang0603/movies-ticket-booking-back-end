@@ -1,7 +1,11 @@
 package com.dangtm.movie.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 
+import com.dangtm.movie.repository.MovieRepository;
+import com.dangtm.movie.util.AutoCompleteUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -14,17 +18,31 @@ import com.dangtm.movie.service.SearchService;
 import com.dangtm.movie.util.ElasticsearchUtil;
 
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SearchServiceImpl implements SearchService {
 
     ElasticsearchOperations elasticsearchOperations;
+    MovieRepository movieRepository;
+    AutoCompleteUtil autoCompleteUtil;
+
+    @Autowired
+    public SearchServiceImpl(ElasticsearchOperations elasticsearchOperations, MovieRepository movieRepository, AutoCompleteUtil autoCompleteUtil) {
+        this.elasticsearchOperations = elasticsearchOperations;
+        this.movieRepository = movieRepository;
+        this.autoCompleteUtil = autoCompleteUtil;
+        var movies = movieRepository.findAll();
+        movies.forEach(autoCompleteUtil::insert);
+    }
+
+    @Override
+    public List<MovieIndex> autoCompleteMovie(String query) {
+        return autoCompleteUtil.autoComplete(query.toLowerCase());
+    }
 
     @Override
     public List<MovieIndex> autoSuggestMovie(String query) {

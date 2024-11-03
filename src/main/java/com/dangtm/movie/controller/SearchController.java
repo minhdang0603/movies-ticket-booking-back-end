@@ -41,4 +41,11 @@ public class SearchController {
                 .data(searchService.autoSuggestCinema(query, lat, lon, distance))
                 .build();
     }
+
+    @GetMapping("/demo")
+    public ApiResponse<List<MovieIndex>> autoCompleteMovie(@RequestParam(value = "query") String query) {
+        return ApiResponse.<List<MovieIndex>>builder()
+                .data(searchService.autoCompleteMovie(query))
+                .build();
+    }
 }

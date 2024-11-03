@@ -13,7 +13,6 @@ public class ElasticsearchUtil {
 
     private static final String DISTANCE_UNIT = "km";
     private static final String GEO_DISTANCE_FIELD = "location";
-    private static final String AUTOCOMPLETE = "autocomplete";
 
     public static Query createMovieAutoSuggestQuery(String query, List<String> searchFields) {
         return NativeQuery.builder()

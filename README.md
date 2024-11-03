@@ -4,18 +4,12 @@
 
 - Ensure that the Kafka, KSQL, Schema Registry, Kafka connect servers are running.
 - **Kafka topic**:
-  - `movie_db.audio`
   - `movie_db.movie`
-  - `movie_db.city`
   - `movie_db.cinema`
-  - `movie_db.cinema_image`
   - `movie_db.shows`
 - **MySQL table**:
-  - `audio`
   - `movie`
-  - `city`
   - `cinema`
-  - `cinema_image`
   - `shows`
 
 ## Open ksqlDB cli commands
@@ -205,4 +199,47 @@ CREATE SOURCE CONNECTOR "es_connector" WITH (
     'behavior.on.null.values' = 'DELETE',
     'key.converter' = 'org.apache.kafka.connect.storage.StringConverter'
 );
+```
+## Elasticsearch Query to search movies by title, director, actors:
+/movies/_search
+```json
+{
+  "query": {
+    "multi_match": {
+      "query": "query",
+      "fields": ["title", "director", "actors"],
+      "type": "bool_prefix"
+    }
+  },
+  "from": 0,
+  "size": 10
+}
+```
+## Elasticsearch Query to search cinema by name and location:
+/cinema/_search
+```json
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match_phrase_prefix": {
+          "name": {
+            "query": "query"
+          }
+        }
+      },
+      "filter": {
+        "geo_distance": {
+          "distance": "5km",
+          "location": {
+            "lat": lat,
+            "lon": lon
+          }
+        }
+      }
+    }
+  },
+  "from": 0,
+  "size": 10
+}
 ```

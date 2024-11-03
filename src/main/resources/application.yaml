@@ -50,7 +50,7 @@ mail:
     addr: minhdan0603@yandex.com
 
 front-end:
-  url: ${FRONT_END_URL:https://movies-ticket-booking-front-end.vercel.app/}
+  url: ${FRONT_END_URL:http://localhost:3000}
 
 chrome:
   driver:
