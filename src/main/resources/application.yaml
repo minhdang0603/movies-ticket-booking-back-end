@@ -12,7 +12,7 @@ spring:
     host: smtp.yandex.com
     port: 465
     username: minhdan0603@yandex.com
-    password: pkjxmdxlavidcbie
+    password: wvpjvbclerlnvnzq
     properties:
       mail:
         smtp:
